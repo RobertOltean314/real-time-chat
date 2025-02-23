@@ -9,3 +9,5 @@ frontend/package-lock.json
 frontend/package.json
 frontend/vite.config.js
 frontend/eslint.config.js
+frontend/postcss.config.cjs
+frontend/tailwind.config.js
