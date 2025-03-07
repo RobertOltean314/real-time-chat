@@ -19,6 +19,25 @@ const ChatContainer = () => {
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
+  useEffect(() => {
+    getMessages(selectedUser._id);
+
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
+  }, [
+    selectedUser._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
+
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
@@ -42,30 +61,24 @@ const ChatContainer = () => {
             }`}
             ref={messageEndRef}
           >
-            <div className="chat-image avatar">
-              <div className="size-12 rounded-full border shadow-lg">
+            <div className=" chat-image avatar">
+              <div className="size-10 rounded-full border">
                 <img
                   src={
                     message.senderId === authUser._id
-                      ? authUser.profilePicture || "/avatar.png"
-                      : selectedUser.profilePicture || "/avatar.png"
+                      ? authUser.profilePic || "/avatar.png"
+                      : selectedUser.profilePic || "/avatar.png"
                   }
                   alt="profile pic"
                 />
               </div>
             </div>
             <div className="chat-header mb-1">
-              <time className="text-xs opacity-70 ml-1">
+              <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div
-              className={`chat-bubble flex flex-col p-3 rounded-lg ${
-                message.senderId === authUser._id
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-black"
-              }`}
-            >
+            <div className="chat-bubble flex flex-col">
               {message.image && (
                 <img
                   src={message.image}
